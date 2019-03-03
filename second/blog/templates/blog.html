@@ -1,0 +1,99 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+<br>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>간단한 지도 표시하기</title>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=jj7n5xb6ug"></script>
+</head>
+
+<body>
+<div id="map" style="width:80%;height:300px;"></div>
+<!-- 이거 자체가 지도 복사할 때는 id 에다가 2붙이는 식으로 하기 -->
+
+<script>
+var mapOptions = {
+    center: new naver.maps.LatLng(37.3595704, 127.105399),
+    zoom: 12
+};
+var map = new naver.maps.Map('map', mapOptions);
+
+var HOME_PATH = window.HOME_PATH || '.'; 
+// 사진이 있는 위치 적어줄 수 있다
+
+var cityhall = new naver.maps.LatLng(37.5666805, 126.9784147),
+    map = new naver.maps.Map('map', {
+        center: cityhall.destinationPoint(0, 500),
+        zoom: 10
+    }),
+    marker = new naver.maps.Marker({
+        map: map,
+        position: cityhall
+    });
+
+var contentString = [
+        '<div class="iw_inner">',
+        '   <h3>서울특별시청</h3>',
+        '   <p>서울특별시 중구 태평로1가 31 | 서울특별시 중구 세종대로 110 서울특별시청<br />',
+        '       <img src="'+ HOME_PATH +'/img/example/hi-seoul.jpg" width="55" height="55" alt="서울시청" class="thumb" /><br />',
+        '       02-120 | 공공,사회기관 &gt; 특별,광역시청<br />',
+        '       <a href="http://www.seoul.go.kr" target="_blank">www.seoul.go.kr/</a>',
+        '   </p>',
+        '</div>'
+    ].join('');
+
+var infowindow = new naver.maps.InfoWindow({
+    content: contentString
+});
+
+naver.maps.Event.addListener(marker, "click", function(e) {
+    if (infowindow.getMap()) {
+        infowindow.close();
+    } else {
+        infowindow.open(map, marker);
+    }
+});
+
+infowindow.open(map, marker);
+</script>
+
+<br>
+      {% for blog in posts %}
+      <div class="container">
+          <div class= "flex">
+            <a href="{% url 'detail' blog.id %}" style="text-decoration : none" class="left">
+                <h1>{{ blog.title }}</h1>
+            </a>
+            <p class="right">{{ blog.pub_date }}</p>
+          </div>
+          <p>{{ blog.summary }}<a href="{% url 'detail' blog.id %}">...more</a></p>
+      </div>
+      {% endfor %}
+
+      <!-- First Previous 3of4 Next Last -->
+      <div class="container">
+          {% if posts.has_previous%}
+            <a href="?page=1">First</a>
+            <a href="?page={{posts.previous_page_number}}">Previous</a>
+          {%endif%}
+
+          <span>{{posts.number}}</span>
+          <span>of</span>
+          <span>{{posts.paginator.num_pages}}</span>
+
+        {% if posts.has_next %}
+            <a href="?page={{posts.next_page_number}}">Next</a>
+            <a href="?page={{posts.paginator.num_page}}">Last</a>
+        {%endif%}
+    </div>
+</body>
+</html>
+{% endblock %}

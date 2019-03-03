@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+      <br>
+      <div class="container">
+            <form action="{% url 'create2' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <p>제목: </p>
+                <input type="text" name="title">
+                <br>
+                <br>
+                <p>본문: </p>
+                <textarea cols=40 rows=10 name="description"></textarea>
+                <br>
+                <br>    
+                <input type="file" class="" name="image">
+                <br>
+                <input type="submit" value="Submit" />
+            </form>
+
+
+      </div>
+
+{% endblock %}
